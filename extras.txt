@@ -1,0 +1,12 @@
+pymongo[srv]
+https://www.sourcecodester.com/python/15233/file-management-system-python-using-django-free-source-code.html
+
+
+
+documentacion api:
+
+Listar archivos de un usuario: GET /api/userfiles/user-files/
+Crear un nuevo archivo: POST /api/userfiles/
+Obtener la información de un archivo específico: GET /api/userfiles/{id}/
+Borrar un archivo específico: DELETE /api/userfiles/{id}/
+
