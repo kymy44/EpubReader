@@ -15,6 +15,5 @@ class UserFile(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
     
-    #def __str__(self):
-        #return f'{self.user.username} - {self.file.name}'
-
+    def __str__(self):
+        return f"{self.username} - {self.title}"

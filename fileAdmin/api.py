@@ -11,14 +11,14 @@ from rest_framework.decorators import action
 class UserFileViewSet(viewsets.ModelViewSet):
     queryset = UserFile.objects.all()
     serializer_class= UserFileSerializer
-    permissions_classes = False #[permissions.IsAdminUser]#[permissions.IsOwnerOrPublic]#[permissions.isAuthenticated]
+    permissions_classes = [permissions.IsAuthenticated]
     
-    def get_queryset(self):
+    '''def get_queryset(self):
          #Verifica si la solicitud proviene del endpoint "/public/"
         if self.request.path.endswith('/public/'):
             return UserFile.objects.filter(user__username='public')
         return UserFile.objects.all()
-    
+    '''
     @action(detail=False, methods=['get'], url_path='user-files', url_name='user-files')
     def list_user_files(self, request):
         user = request.user
