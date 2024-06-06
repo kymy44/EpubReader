@@ -4,7 +4,16 @@ from django.contrib import admin
 
 from fileAdmin.models import UserFile
 
-class AdminUserFile(admin.ModelAdmin):
-        list_display = ("id","file","uploaded_at","title")
 
-admin.site.register(UserFile,AdminUserFile)
+class AdminUserFile(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "title",
+        "isPublic",
+        "file",
+        "uploaded_at",
+    )
+
+
+admin.site.register(UserFile, AdminUserFile)
