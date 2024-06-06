@@ -2,10 +2,10 @@ from django.contrib import admin
 
 # Register your models here.
 
-from fileAdmin.models import UserFile
+from fileAdmin.models import File
 
 
-class AdminUserFile(admin.ModelAdmin):
+class AdminFile(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
@@ -16,4 +16,4 @@ class AdminUserFile(admin.ModelAdmin):
     )
 
 
-admin.site.register(UserFile, AdminUserFile)
+admin.site.register(File, AdminFile)
