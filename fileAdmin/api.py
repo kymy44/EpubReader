@@ -12,7 +12,7 @@ class UserFileViewSet(viewsets.ModelViewSet):
     serializer_class = UserFileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request):
+    def list(self, request): #sobreescribo el método por defecto para el GET de listas
         requestingUser = self.request.user
         if not requestingUser.is_authenticated:
             return Response(
@@ -23,7 +23,7 @@ class UserFileViewSet(viewsets.ModelViewSet):
         serializer = UserFileSerializer(files_qs, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None): #sobreescribo el método por defe
         try:
             file = UserFile.objects.get(pk=pk, user=request.user)
             serializer = UserFileSerializer(file)
