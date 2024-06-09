@@ -1,42 +1,45 @@
 from rest_framework import viewsets, permissions
-from fileAdmin.models import UserFile, Q
-from fileAdmin.serializers import UserFileSerializer
+from fileAdmin.models import File, Q
+from fileAdmin.serializers import FileSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from django.core.files import File
+#from django.core.files import File
 from rest_framework.decorators import action
 
 
-class UserFileViewSet(viewsets.ModelViewSet):
-    queryset = UserFile.objects.all()
-    serializer_class = UserFileSerializer
+class FileViewSet(viewsets.ModelViewSet):
+    queryset = File.objects.all()
+    serializer_class = FileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request): #sobreescribo el método por defecto para el GET de listas
-        requestingUser = self.request.user
-        if not requestingUser.is_authenticated:
-            return Response(
-                {"detail": "Authentication credentials were not provided."}, status=401
-            )
-
-        files_qs = UserFile.objects.filter(user=requestingUser)
-        serializer = UserFileSerializer(files_qs, many=True)
+    def list(self, request):  # sobreescribo el método por defecto para el GET de listas
+        reqUser = self.request.user
+        files_qs = File.objects.filter(user=reqUser)
+        serializer = FileSerializer(files_qs, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None): #sobreescribo el método por defe
+    def retrieve(self, request, pk=None):  # sobreescribo el método por defecto
         try:
-            file = UserFile.objects.get(pk=pk, user=request.user)
-            serializer = UserFileSerializer(file)
-            return Response(serializer.data)
-        except UserFile.DoesNotExist:
+            file = File.objects.get(pk=pk)
+
+            if file.isPublic:
+                serializer = FileSerializer(file)
+                return Response(serializer.data)
+            if file.user == self.request.user:
+                serializer = FileSerializer(file)
+                return Response(serializer.data)
+            print(file.user, " tal ", self.request.user)
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        except File.DoesNotExist:
             return Response(
                 {"detail": "File not found or not owned by user"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
     def listPublicFiles(self, request):
-        files_qs = UserFile.objects.filter(isPublic=True)
-        files = UserFileSerializer(files_qs, many=True).data
+        files_qs = File.objects.filter(isPublic=True)
+        files = FileSerializer(files_qs, many=True).data
         return Response(files)
 
     # asegura que el usuario que se guarda sea el que realiza la peticion
@@ -53,13 +56,13 @@ class UserFileViewSet(viewsets.ModelViewSet):
             )
 
         try:
-            user_file = UserFile.objects.get(id=file_id, user=request.user)
-            user_file.delete()
+            file = File.objects.get(id=file_id, user=request.user)
+            file.delete()
             return Response(
                 {"detail": "File deleted successfully"},
                 status=status.HTTP_204_NO_CONTENT,
             )
-        except UserFile.DoesNotExist:
+        except File.DoesNotExist:
             return Response(
                 {"detail": "File not found or not owned by user"},
                 status=status.HTTP_404_NOT_FOUND,
